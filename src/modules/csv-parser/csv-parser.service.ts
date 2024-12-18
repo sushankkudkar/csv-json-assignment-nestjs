@@ -7,14 +7,13 @@ export class CsvParserService {
   constructor(private readonly awsS3Service: AwsS3Service) {}
 
   async parseCsvFromS3(bucketName: string, fileName: string): Promise<any[]> {
-    const fileStream = await this.awsS3Service.readCsvFileStream(bucketName, fileName);
-    return await this.parseCsvStream(fileStream);
+    const fileStream = await this.awsS3Service.getFileStream(bucketName, fileName);
+    return await this.parseCsvFileStream(fileStream);
   }
 
-  private parseCsvStream(fileStream: Readable): Promise<any[]> {
+  private parseCsvFileStream(fileStream: Readable): Promise<any[]> {
     return new Promise((resolve, reject) => {
       let rawData = '';
-      const results: any[] = [];
       fileStream.on('data', (chunk) => {
         rawData += chunk;
       });

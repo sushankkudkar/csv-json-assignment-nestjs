@@ -1,28 +1,28 @@
-import { Processor, Process } from '@nestjs/bull';
+import { Processor, WorkerHost } from '@nestjs/bullmq'; // Import WorkerHost along with Processor
 import { Logger } from '@nestjs/common';
-
-import { Job } from 'bull';
-
+import { Job } from 'bullmq';
 import { CsvParserService } from '~/modules/csv-parser/csv-parser.service';
-
 import { User } from '~/processors/database/services/all.model';
 import { UserService } from '~/processors/database/services/all.services';
+import { BULLMQ_QUEUE } from '~/constants/meta.constant';
 
-@Processor('csv-import')
-export class JobsProcessor {
+@Processor(BULLMQ_QUEUE)
+export class JobsProcessor extends WorkerHost {
   private readonly logger = new Logger(JobsProcessor.name);
 
   constructor(
     private readonly csvParserService: CsvParserService,
     private readonly userService: UserService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
-   * Process the CSV import job
-   * @param job - The job containing the CSV file information
+   * This method is required by WorkerHost and should be implemented to process jobs.
+   * @param job - The job being processed.
    */
-  @Process()
-  async processUserCsvImportJob(job: Job) {
+  async process(job: Job<any, any, string>) {
+    // Assuming BULLMQ_QUEUE jobs contain the necessary information like bucketName and fileName
     const { bucketName, fileName } = job.data;
 
     this.logger.log(`Processing CSV file from S3: ${fileName}`);
@@ -59,7 +59,7 @@ export class JobsProcessor {
       const firstName = trimmedRow['name.firstName'];
       const lastName = trimmedRow['name.lastName'];
       const name = `${firstName} ${lastName}`;
-      const age = Number(trimmedRow['age']); // Convert age to number
+      const age = Number(trimmedRow['age']);
 
       const { 'name.firstName': firstNameField, 'name.lastName': lastNameField, 'age': ageField, ...rest } = trimmedRow;
 

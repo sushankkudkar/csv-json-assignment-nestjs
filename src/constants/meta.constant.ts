@@ -6,3 +6,6 @@
 
 // Key for tracking HTTP request time
 export const HTTP_REQUEST_TIME = 'http:req_time';
+
+// Key for Job Processing Queue
+export const BULLMQ_QUEUE = 'csv-import';

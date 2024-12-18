@@ -53,11 +53,11 @@ export class AwsS3Service {
   }
 
   /**
-   * Read the content of a CSV file from S3 as a stream and parse it
+   * Read the content of a CSV file from S3 as a stream
    * @param bucketName - The S3 bucket name
    * @param fileName - The file name in S3
    */
-  async readCsvFileStream(bucketName: string, fileName: string): Promise<stream.Readable> {
+  async getFileStream(bucketName: string, fileName: string): Promise<stream.Readable> {
     const getObjectParams = {
       Bucket: bucketName,
       Key: fileName,

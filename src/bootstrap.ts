@@ -75,7 +75,7 @@ async function startServer(app: NestExpressApplication, configService: ConfigSer
     const url = await app.getUrl();
     logger.log(`[PID:${process.pid}] Server listening on: ${url}; NODE_ENV: ${env}`);
   } catch (err) {
-    logger.error(`Error starting server: ${err.message}`);
+    logger.error(`Error starting server: ${err}`);
   }
 }
 
